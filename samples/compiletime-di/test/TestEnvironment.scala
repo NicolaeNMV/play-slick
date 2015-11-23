@@ -6,6 +6,7 @@ import org.specs2.mutable.Around
 import org.specs2.specification.Scope
 import play.api._
 import play.api.test.Helpers
+import play.api.ApplicationLoader.Context
 
 object TestEnvironment {
 
@@ -24,6 +25,13 @@ object TestEnvironment {
       new Environment(new java.io.File("."), ApplicationLoader.getClass.getClassLoader, Mode.Test)
     )
     new ApplicationComponents(context)
+  }
+
+  def initAppCustomComponents(constructComponent: Context => ApplicationComponents): ApplicationComponents = {
+    val context = ApplicationLoader.createContext(
+      new Environment(new java.io.File("."), ApplicationLoader.getClass.getClassLoader, Mode.Test)
+    )
+    constructComponent(context)
   }
 
   class WithApplicationComponents extends Around with Scope {
